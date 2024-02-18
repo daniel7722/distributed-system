@@ -39,10 +39,13 @@ public class Sensor implements ISensor {
     try {
       InetAddress addr = InetAddress.getByName(address);
       s = new DatagramSocket(port, addr);
-      System.out.println(s.getPort());
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  private String addressCleaner(String address) {
+    return address.substring(1);
   }
 
   @Override
@@ -51,17 +54,10 @@ public class Sensor implements ISensor {
     for (int i = 0; i < N; i++) {
       measurement = this.getMeasurement();
       MessageInfo messageInfo = new MessageInfo(N, i, measurement);
-      sendMessage(String.valueOf(s.getInetAddress()), s.getPort(), messageInfo);
+      sendMessage(String.valueOf(s.getLocalAddress()), s.getLocalPort(), messageInfo);
       System.out.println(
           "[Sensor] Sending message " + i + " out of " + N + ". Measure = " + measurement);
     }
-    /* Hint: You can get ONE measurement by calling
-     *
-     * float measurement = this.getMeasurement();
-     */
-
-    /* TODO: Call sendMessage() to send the msg to destination */
-
   }
 
   public static void main(String[] args) throws InterruptedException, IOException {
@@ -87,7 +83,7 @@ public class Sensor implements ISensor {
     String toSend = msg.toString();
 
     /* TODO: Build destination address object */
-    InetAddress addr = InetAddress.getByName(address);
+    InetAddress addr = InetAddress.getByName(addressCleaner(address));
 
     /* TODO: Build datagram packet to send */
     byte[] sendData = toSend.getBytes();
