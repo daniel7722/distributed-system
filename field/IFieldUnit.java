@@ -4,6 +4,7 @@ package field;
  */
 import common.MessageInfo;
 
+import java.io.IOException;
 import java.net.SocketException;
 
 public interface IFieldUnit {
@@ -14,7 +15,7 @@ public interface IFieldUnit {
     public void sMovingAverage (int k);
 
     /* Listen on UDP port UNTIL there is no more to receive */
-    public void receiveMeasures(int port, int timeout) throws SocketException;
+    public void receiveMeasures(int port, int timeout) throws IOException;
 
     /* Set up RMI client */
     public void initRMI (String address);
