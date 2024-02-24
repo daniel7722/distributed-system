@@ -34,6 +34,7 @@ public class Sensor implements ISensor {
   private static final int buffsize = 2048;
 
   public Sensor(String address, int port, int totMsg) throws SocketException, UnknownHostException {
+
     /* TODO: Build Sensor Object */
     buffer = new byte[buffsize];
     try {

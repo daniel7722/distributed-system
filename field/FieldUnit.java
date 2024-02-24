@@ -3,6 +3,7 @@ package field;
 /*
  * Updated on Feb 2023
  */
+import centralserver.CentralServer;
 import centralserver.ICentralServer;
 import common.MessageInfo;
 
@@ -156,9 +157,10 @@ public class FieldUnit implements IFieldUnit, Remote {
     /* TODO: Initialise Security Manager (If JAVA version earlier than version 17) */
     /* TODO: Bind to RMIServer */
     try {
-      LocateRegistry.createRegistry(1099);
-      FieldUnit stub = (FieldUnit) UnicastRemoteObject.exportObject(this, 0);
-      Naming.rebind("//" + address + "/FieldUnit", this);
+      StringBuilder stringBuilder = new StringBuilder("rmi://");
+      stringBuilder.append(address);
+      stringBuilder.append("/CentralService");
+      CentralServer centralServer = (CentralServer) Naming.lookup("rmi://" + address + "/CentralService");
       System.out.println("FieldUnit is ready to listen on " + address);
     } catch (RemoteException e) {
       System.err.println("RemoteException: " + e.getMessage());
@@ -166,6 +168,8 @@ public class FieldUnit implements IFieldUnit, Remote {
     } catch (MalformedURLException e) {
       System.err.println("MalformedURLException: " + e.getMessage());
       e.printStackTrace();
+    } catch (NotBoundException e) {
+      throw new RuntimeException(e);
     }
   }
 
