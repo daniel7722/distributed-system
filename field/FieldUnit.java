@@ -82,7 +82,7 @@ public class FieldUnit implements IFieldUnit, Remote {
 
     /* TODO: Create UDP socket and bind to local port 'port' */
     DatagramSocket s = new DatagramSocket(port);
-    DatagramPacket p = null;
+    DatagramPacket p;
     byte[] receive = new byte[buffsize];
 
     boolean listen = true;
@@ -92,6 +92,7 @@ public class FieldUnit implements IFieldUnit, Remote {
     s.setSoTimeout(timeout);
 
     while (listen) {
+      MessageInfo messageInfo = null;
       try {
         /* TODO: Receive until all messages in the transmission (msgTot) have been received or until
         there is nothing more to be received */
@@ -104,16 +105,28 @@ public class FieldUnit implements IFieldUnit, Remote {
         s.receive(p);
 
         /* TODO: Store the message */
-        String msg = Arrays.toString(p.getData());
-        MessageInfo messageInfo = new MessageInfo(msg);
+        String msg = new String(p.getData()).trim();
+        messageInfo = new MessageInfo(msg);
         addMessage(messageInfo);
+        System.out.println(
+            "[Field Unit] Message "
+                + messageInfo.getMessageNum()
+                + " out of "
+                + messageInfo.getTotalMessages()
+                + " received. Value = "
+                + messageInfo.getMessage());
+
 
         /* TODO: Keep listening UNTIL done with receiving  */
         if (messageInfo.getMessageNum() == messageInfo.getTotalMessages()) {
           listen = false;
         }
+      } catch (NumberFormatException e) {
+        System.err.println("NumberFormatException: " + e.getMessage());
+        e.printStackTrace();
       } catch (SocketTimeoutException e) {
         System.out.println("Timer");
+        listen = false;
       }
     }
 
@@ -144,11 +157,12 @@ public class FieldUnit implements IFieldUnit, Remote {
     fieldUnit.sMovingAverage(10);
 
     /* TODO: Compute and print stats */
+    fieldUnit.printStats();
 
     /* TODO: Send data to the Central Serve via RMI and
      *        wait for incoming transmission again
      */
-
+    fieldUnit.sendAverages();
   }
 
   @Override
@@ -157,13 +171,11 @@ public class FieldUnit implements IFieldUnit, Remote {
     /* TODO: Initialise Security Manager (If JAVA version earlier than version 17) */
     /* TODO: Bind to RMIServer */
     try {
-      StringBuilder stringBuilder = new StringBuilder("rmi://");
-      stringBuilder.append(address);
-      stringBuilder.append("/CentralService");
-      CentralServer centralServer = (CentralServer) Naming.lookup("rmi://" + address + "/CentralService");
+      ICentralServer centralServer =
+          (ICentralServer) Naming.lookup("rmi://" + address + "/CentralService");
       System.out.println("FieldUnit is ready to listen on " + address);
     } catch (RemoteException e) {
-      System.err.println("RemoteException: " + e.getMessage());
+      System.err.println("RemoteException:" + e.getMessage());
       e.printStackTrace();
     } catch (MalformedURLException e) {
       System.err.println("MalformedURLException: " + e.getMessage());

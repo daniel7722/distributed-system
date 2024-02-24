@@ -3,28 +3,25 @@ package sensor;
 /*
  * Updated on Feb 2023
  */
+import static java.lang.Thread.sleep;
+
 import common.MessageInfo;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.Random;
 
-/* You can add/change/delete class attributes if you think it would be
- * appropriate.
- *
- * You can also add helper methods and change the implementation of those
- * provided if you think it would be appropriate, as long as you DO NOT
- * CHANGE the interface.
- */
-
 public class Sensor implements ISensor {
 
+  private final int port;
   private float measurement;
 
   private static final int max_measure = 50;
   private static final int min_measure = 10;
 
-  private DatagramSocket s;
+  private final DatagramSocket s = new DatagramSocket();
+  private DatagramPacket p;
+  private final String address;
   private byte[] buffer;
 
   /* Note: Could you discuss in one line of comment what you think can be
@@ -37,27 +34,20 @@ public class Sensor implements ISensor {
 
     /* TODO: Build Sensor Object */
     buffer = new byte[buffsize];
-    try {
-      InetAddress addr = InetAddress.getByName(address);
-      s = new DatagramSocket(port, addr);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  private String addressCleaner(String address) {
-    return address.substring(1);
+    this.address = address;
+    this.port = port;
   }
 
   @Override
   public void run(int N) throws InterruptedException, IOException {
     /* TODO: Send N measurements */
-    for (int i = 0; i < N; i++) {
+    for (int i = 1; i < N+1; i++) {
       measurement = this.getMeasurement();
       MessageInfo messageInfo = new MessageInfo(N, i, measurement);
-      sendMessage(String.valueOf(s.getLocalAddress()), s.getLocalPort(), messageInfo);
+      sendMessage(address, port, messageInfo);
       System.out.println(
           "[Sensor] Sending message " + i + " out of " + N + ". Measure = " + measurement);
+//      sleep(1000);
     }
   }
 
@@ -84,7 +74,7 @@ public class Sensor implements ISensor {
     String toSend = msg.toString();
 
     /* TODO: Build destination address object */
-    InetAddress addr = InetAddress.getByName(addressCleaner(address));
+    InetAddress addr = InetAddress.getByName(address);
 
     /* TODO: Build datagram packet to send */
     byte[] sendData = toSend.getBytes();

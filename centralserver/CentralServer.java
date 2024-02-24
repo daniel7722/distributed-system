@@ -15,14 +15,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/* You can add/change/delete class attributes if you think it would be
- * appropriate.
- *
- * You can also add helper methods and change the implementation of those
- * provided if you think it would be appropriate, as long as you DO NOT
- * CHANGE the provided interface.
- */
-
 /* TODO extend appropriate classes and implement the appropriate interfaces */
 public class CentralServer extends UnicastRemoteObject implements ICentralServer {
 
@@ -36,22 +28,22 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
     receivedMessages = new ArrayList<>();
   }
 
-  public void main(String[] args) throws RemoteException {
+  public static void main(String[] args) throws RemoteException {
     ICentralServer cs = new CentralServer();
-    ICentralServer stub = (ICentralServer) UnicastRemoteObject.exportObject(cs, 0);
+
     /* TODO: Create (or Locate) Registry */
-    Registry r = LocateRegistry.getRegistry();
+    Registry r = LocateRegistry.createRegistry(1099);
+    System.out.println("RMI Registry started on port 1099.");
 
     /* TODO: Bind to Registry */
-    r.rebind("CentralService", stub);
+    r.rebind("CentralService", cs);
 
     System.out.println("Central Server is running...");
   }
 
   @Override
   public void receiveMsg(MessageInfo msg) {
-    System.out.println(
-        STR."[Central Server] Received message \{msg.getMessageNum()} out of \{msg.getTotalMessages()}. Measure = \{msg.getMessage()}");
+    System.out.println("[Central Server] Received message" + msg.getMessageNum() + "out of" + msg.getTotalMessages() + ". Measure = " + "msg.getMessage()");
 
     /* TODO: If this is the first message, reset counter and initialise data structure. */
     if (msg.getMessageNum() == 0) {
