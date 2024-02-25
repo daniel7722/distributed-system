@@ -25,7 +25,7 @@ public class Sensor implements ISensor {
 
   // The buffersize chosen here as 24 because each packet has maximum 21 bytes long.
   // It is enough to set the buffersize slightly higher than the maximum to ensure
-  // efficient memory usage. 
+  // efficient memory usage.
   private static final int buffsize = 24;
 
   public Sensor(String address, int port, int totMsg) throws SocketException, UnknownHostException {
@@ -38,14 +38,17 @@ public class Sensor implements ISensor {
   @Override
   public void run(int N) throws InterruptedException, IOException {
     /* TODO: Send N measurements */
-    for (int i = 1; i < N+1; i++) {
+    long startTime = System.nanoTime();
+    for (int i = 1; i < N + 1; i++) {
       measurement = this.getMeasurement();
       MessageInfo messageInfo = new MessageInfo(N, i, measurement);
       sendMessage(address, port, messageInfo);
       System.out.println(
           "[Sensor] Sending message " + i + " out of " + N + ". Measure = " + measurement);
-//      sleep(100);
+      //      sleep(100);
     }
+    long estimatedTime = System.nanoTime() - startTime;
+    System.out.println("Time taken to send these packets is " + estimatedTime / 1000000 + "ms");
   }
 
   public static void main(String[] args) throws InterruptedException, IOException {
@@ -75,13 +78,13 @@ public class Sensor implements ISensor {
 
     /* TODO: Build datagram packet to send */
     byte[] sendData = toSend.getBytes();
-    
+
     if (sendData.length < buffsize) {
-    	p = new DatagramPacket(sendData, sendData.length, addr, port);
-  	/* TODO: Send packet */
-    	s.send(p);
+      p = new DatagramPacket(sendData, sendData.length, addr, port);
+      /* TODO: Send packet */
+      s.send(p);
     } else {
-	System.out.println("Message too long");
+      System.out.println("Message too long");
     }
   }
 
