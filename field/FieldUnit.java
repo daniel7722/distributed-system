@@ -3,6 +3,8 @@ package field;
 /*
  * Updated on Feb 2023
  */
+import static java.lang.Thread.sleep;
+
 import centralserver.CentralServer;
 import centralserver.ICentralServer;
 import common.MessageInfo;
@@ -46,6 +48,10 @@ public class FieldUnit implements IFieldUnit, Remote {
   private int timeout = 50000;
   private List<Float> receivedMessages;
   private final List<Float> movingAverage;
+  private int totalMessage;
+  private int totalMissing;
+
+  private ICentralServer centralServer;
 
   public FieldUnit() {
     /* TODO: Initialise data structures */
@@ -64,14 +70,17 @@ public class FieldUnit implements IFieldUnit, Remote {
     /* TODO: Compute SMA and store values in a class attribute */
     float average = 0;
     int rear = 0;
-    for (; rear < k; rear++) {
+    // i < k
+    for (; rear < k-1; rear++) {
+      movingAverage.add(receivedMessages.get(rear));
       average += receivedMessages.get(rear) / k;
     }
-    movingAverage.add(average);
+
+    // i >= k
     for (int front = 0; rear < receivedMessages.size(); rear++, front++) {
       average += receivedMessages.get(rear) / k;
-      average -= receivedMessages.get(front) / k;
       movingAverage.add(average);
+      average -= receivedMessages.get(front) / k;
     }
   }
 
@@ -90,7 +99,6 @@ public class FieldUnit implements IFieldUnit, Remote {
     System.out.println("[Field Unit] Listening on port: " + port);
 
     s.setSoTimeout(timeout);
-    int totalMessage = 0;
 
     while (listen) {
       MessageInfo messageInfo = null;
@@ -104,7 +112,6 @@ public class FieldUnit implements IFieldUnit, Remote {
           receivedMessages = new ArrayList<>();
         }
         s.receive(p);
-
 
         /* TODO: Store the message */
         String msg = new String(p.getData()).trim();
@@ -134,8 +141,6 @@ public class FieldUnit implements IFieldUnit, Remote {
 
     /* TODO: Close socket  */
     s.close();
-    int totalMissing = receivedMessages.size() - totalMessage;
-    System.out.println("Total Missing Message receiving = " + totalMissing);
   }
 
   public static void main(String[] args) throws Exception {
@@ -158,7 +163,7 @@ public class FieldUnit implements IFieldUnit, Remote {
     fieldUnit.receiveMeasures(port, fieldUnit.timeout);
 
     /* TODO: Compute Averages - call sMovingAverage() on Field Unit object */
-    fieldUnit.sMovingAverage(10);
+    fieldUnit.sMovingAverage(7);
 
     /* TODO: Compute and print stats */
     fieldUnit.printStats();
@@ -175,8 +180,7 @@ public class FieldUnit implements IFieldUnit, Remote {
     /* TODO: Initialise Security Manager (If JAVA version earlier than version 17) */
     /* TODO: Bind to RMIServer */
     try {
-      ICentralServer centralServer =
-          (ICentralServer) Naming.lookup("rmi://" + address + "/CentralService");
+      centralServer = (ICentralServer) Naming.lookup("rmi://" + address + "/CentralService");
       System.out.println("FieldUnit is ready to listen on " + address);
     } catch (RemoteException e) {
       System.err.println("RemoteException:" + e.getMessage());
@@ -192,16 +196,31 @@ public class FieldUnit implements IFieldUnit, Remote {
   @Override
   public void sendAverages() {
     /* TODO: Attempt to send messages the specified number of times */
-
+    for (float f: movingAverage) {
+      MessageInfo messageInfo = new MessageInfo(movingAverage.size(), movingAverage.indexOf(f)+1, f);
+      try {
+        centralServer.receiveMsg(messageInfo);
+      } catch (RemoteException e) {
+        System.err.println("RemoteException: " + e.getMessage());
+        e.printStackTrace();
+      }
+      try {
+        sleep(500);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 
   @Override
   public void printStats() {
     /* TODO: Find out how many messages were missing */
+    totalMissing = receivedMessages.size() - totalMessage;
 
     /* TODO: Print stats (i.e. how many message missing? do we know their sequence number? etc.) */
+    System.out.println("Total Missing Message = " + totalMissing + " out of " + totalMessage);
 
     /* TODO: Now re-initialise data structures for next time */
-
+    receivedMessages = null;
   }
 }

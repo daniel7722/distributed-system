@@ -43,7 +43,7 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
 
   @Override
   public void receiveMsg(MessageInfo msg) {
-    System.out.println("[Central Server] Received message" + msg.getMessageNum() + "out of" + msg.getTotalMessages() + ". Measure = " + "msg.getMessage()");
+    System.out.println("[Central Server] Received message " + msg.getMessageNum() + " out of " + msg.getTotalMessages() + ". Measure = " + msg.getMessage());
 
     /* TODO: If this is the first message, reset counter and initialise data structure. */
     if (msg.getMessageNum() == 0) {
