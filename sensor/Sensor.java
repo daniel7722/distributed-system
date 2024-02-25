@@ -47,7 +47,7 @@ public class Sensor implements ISensor {
       sendMessage(address, port, messageInfo);
       System.out.println(
           "[Sensor] Sending message " + i + " out of " + N + ". Measure = " + measurement);
-      sleep(500);
+//      sleep(100);
     }
   }
 

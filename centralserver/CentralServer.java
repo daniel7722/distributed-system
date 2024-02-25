@@ -20,6 +20,7 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
 
   private List<MessageInfo> receivedMessages;
   private int counter;
+  private int totalMessage;
 
   protected CentralServer() throws RemoteException {
     super();
@@ -43,10 +44,18 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
 
   @Override
   public void receiveMsg(MessageInfo msg) {
-    System.out.println("[Central Server] Received message " + msg.getMessageNum() + " out of " + msg.getTotalMessages() + ". Measure = " + msg.getMessage());
+    totalMessage = msg.getTotalMessages();
+
+    System.out.println(
+        "[Central Server] Received message "
+            + msg.getMessageNum()
+            + " out of "
+            + msg.getTotalMessages()
+            + ". Measure = "
+            + msg.getMessage());
 
     /* TODO: If this is the first message, reset counter and initialise data structure. */
-    if (msg.getMessageNum() == 0) {
+    if (msg.getMessageNum() == 1) {
       counter = 0;
       receivedMessages = new ArrayList<>();
     }
@@ -57,16 +66,17 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
 
     /* TODO: If done with receiveing prints stats. */
     printStats();
-
   }
 
   public void printStats() {
     /* TODO: Find out how many messages were missing */
+    int totalMissing = totalMessage - counter;
 
     /* TODO: Print stats (i.e. how many message missing?
      * do we know their sequence number? etc.) */
+    System.out.println("Total missing messages: " + totalMissing + " out of " + totalMessage);
 
     /* TODO: Now re-initialise data structures for next time */
-
+    receivedMessages.clear();
   }
 }

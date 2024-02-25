@@ -68,10 +68,11 @@ public class FieldUnit implements IFieldUnit, Remote {
   @Override
   public void sMovingAverage(int k) {
     /* TODO: Compute SMA and store values in a class attribute */
+    System.out.println("Computing SMAs");
     float average = 0;
     int rear = 0;
     // i < k
-    for (; rear < k-1; rear++) {
+    for (; rear < k - 1 && rear < receivedMessages.size(); rear++) {
       movingAverage.add(receivedMessages.get(rear));
       average += receivedMessages.get(rear) / k;
     }
@@ -114,7 +115,7 @@ public class FieldUnit implements IFieldUnit, Remote {
         s.receive(p);
 
         /* TODO: Store the message */
-        String msg = new String(p.getData()).trim();
+        String msg = new String(p.getData()).replaceAll("[\n\r]", "");
         messageInfo = new MessageInfo(msg);
         addMessage(messageInfo);
         totalMessage = messageInfo.getTotalMessages();
@@ -160,18 +161,20 @@ public class FieldUnit implements IFieldUnit, Remote {
     fieldUnit.initRMI(address);
 
     /* TODO: Wait for incoming transmission */
-    fieldUnit.receiveMeasures(port, fieldUnit.timeout);
+    while (true) {
+      fieldUnit.receiveMeasures(port, fieldUnit.timeout);
 
-    /* TODO: Compute Averages - call sMovingAverage() on Field Unit object */
-    fieldUnit.sMovingAverage(7);
+      /* TODO: Compute Averages - call sMovingAverage() on Field Unit object */
+      fieldUnit.sMovingAverage(7);
 
-    /* TODO: Compute and print stats */
-    fieldUnit.printStats();
+      /* TODO: Compute and print stats */
+      fieldUnit.printStats();
 
-    /* TODO: Send data to the Central Serve via RMI and
-     *        wait for incoming transmission again
-     */
-    fieldUnit.sendAverages();
+      /* TODO: Send data to the Central Serve via RMI and
+       *        wait for incoming transmission again
+       */
+      fieldUnit.sendAverages();
+    }
   }
 
   @Override
@@ -196,31 +199,34 @@ public class FieldUnit implements IFieldUnit, Remote {
   @Override
   public void sendAverages() {
     /* TODO: Attempt to send messages the specified number of times */
-    for (float f: movingAverage) {
-      MessageInfo messageInfo = new MessageInfo(movingAverage.size(), movingAverage.indexOf(f)+1, f);
+    System.out.println("Sending SMAs to RMI");
+    for (float f : movingAverage) {
+      MessageInfo messageInfo =
+          new MessageInfo(movingAverage.size(), movingAverage.indexOf(f) + 1, f);
       try {
         centralServer.receiveMsg(messageInfo);
       } catch (RemoteException e) {
         System.err.println("RemoteException: " + e.getMessage());
         e.printStackTrace();
       }
-      try {
-        sleep(500);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
+//      try {
+//        sleep(100);
+//      } catch (InterruptedException e) {
+//        throw new RuntimeException(e);
+//      }
     }
+    movingAverage.clear();
   }
 
   @Override
   public void printStats() {
     /* TODO: Find out how many messages were missing */
-    totalMissing = receivedMessages.size() - totalMessage;
+    totalMissing = totalMessage - receivedMessages.size();
 
     /* TODO: Print stats (i.e. how many message missing? do we know their sequence number? etc.) */
     System.out.println("Total Missing Message = " + totalMissing + " out of " + totalMessage);
 
     /* TODO: Now re-initialise data structures for next time */
-    receivedMessages = null;
+    receivedMessages.clear();
   }
 }
