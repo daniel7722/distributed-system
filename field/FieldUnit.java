@@ -100,6 +100,7 @@ public class FieldUnit implements IFieldUnit, Remote {
     System.out.println("[Field Unit] Listening on port: " + port);
 
     s.setSoTimeout(timeout);
+    long startTime = System.nanoTime();
 
     while (listen) {
       MessageInfo messageInfo = null;
@@ -109,8 +110,10 @@ public class FieldUnit implements IFieldUnit, Remote {
         p = new DatagramPacket(receive, receive.length);
 
         /* TODO: If this is the first message, initialise the receive data structure before storing it. */
+
         if (receivedMessages == null) {
           receivedMessages = new ArrayList<>();
+          startTime = System.nanoTime();
         }
         s.receive(p);
 
@@ -129,6 +132,10 @@ public class FieldUnit implements IFieldUnit, Remote {
 
         /* TODO: Keep listening UNTIL done with receiving  */
         if (messageInfo.getMessageNum() == messageInfo.getTotalMessages()) {
+          long estimatedTime = System.nanoTime() - startTime;
+          System.out.println(
+              "Time taken to receive these packets is " + estimatedTime / 1000000 + "ms");
+
           listen = false;
         }
       } catch (NumberFormatException e) {
@@ -209,11 +216,11 @@ public class FieldUnit implements IFieldUnit, Remote {
         System.err.println("RemoteException: " + e.getMessage());
         e.printStackTrace();
       }
-//      try {
-//        sleep(100);
-//      } catch (InterruptedException e) {
-//        throw new RuntimeException(e);
-//      }
+      //      try {
+      //        sleep(100);
+      //      } catch (InterruptedException e) {
+      //        throw new RuntimeException(e);
+      //      }
     }
     movingAverage.clear();
   }
