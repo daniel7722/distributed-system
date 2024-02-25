@@ -90,6 +90,7 @@ public class FieldUnit implements IFieldUnit, Remote {
     System.out.println("[Field Unit] Listening on port: " + port);
 
     s.setSoTimeout(timeout);
+    int totalMessage = 0;
 
     while (listen) {
       MessageInfo messageInfo = null;
@@ -104,18 +105,19 @@ public class FieldUnit implements IFieldUnit, Remote {
         }
         s.receive(p);
 
+
         /* TODO: Store the message */
         String msg = new String(p.getData()).trim();
         messageInfo = new MessageInfo(msg);
         addMessage(messageInfo);
+        totalMessage = messageInfo.getTotalMessages();
         System.out.println(
             "[Field Unit] Message "
                 + messageInfo.getMessageNum()
                 + " out of "
-                + messageInfo.getTotalMessages()
+                + totalMessage
                 + " received. Value = "
                 + messageInfo.getMessage());
-
 
         /* TODO: Keep listening UNTIL done with receiving  */
         if (messageInfo.getMessageNum() == messageInfo.getTotalMessages()) {
@@ -132,6 +134,8 @@ public class FieldUnit implements IFieldUnit, Remote {
 
     /* TODO: Close socket  */
     s.close();
+    int totalMissing = receivedMessages.size() - totalMessage;
+    System.out.println("Total Missing Message receiving = " + totalMissing);
   }
 
   public static void main(String[] args) throws Exception {
