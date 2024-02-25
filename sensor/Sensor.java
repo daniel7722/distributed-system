@@ -22,18 +22,15 @@ public class Sensor implements ISensor {
   private final DatagramSocket s = new DatagramSocket();
   private DatagramPacket p;
   private final String address;
-  private byte[] buffer;
 
-  /* Note: Could you discuss in one line of comment what you think can be
-   * an appropriate size for buffsize?
-   * (Which is used to init DatagramPacket?)
-   */
-  private static final int buffsize = 2048;
+  // The buffersize chosen here as 24 because each packet has maximum 21 bytes long.
+  // It is enough to set the buffersize slightly higher than the maximum to ensure
+  // efficient memory usage. 
+  private static final int buffsize = 24;
 
   public Sensor(String address, int port, int totMsg) throws SocketException, UnknownHostException {
 
     /* TODO: Build Sensor Object */
-    buffer = new byte[buffsize];
     this.address = address;
     this.port = port;
   }
@@ -78,10 +75,14 @@ public class Sensor implements ISensor {
 
     /* TODO: Build datagram packet to send */
     byte[] sendData = toSend.getBytes();
-    DatagramPacket p = new DatagramPacket(sendData, sendData.length, addr, port);
-
-    /* TODO: Send packet */
-    s.send(p);
+    
+    if (sendData.length < buffsize) {
+    	p = new DatagramPacket(sendData, sendData.length, addr, port);
+  	/* TODO: Send packet */
+    	s.send(p);
+    } else {
+	System.out.println("Message too long");
+    }
   }
 
   @Override
