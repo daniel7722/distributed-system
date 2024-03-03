@@ -75,7 +75,7 @@ public class FieldUnit implements IFieldUnit, Remote {
     byte[] receive = new byte[buffSize];
     boolean listen = true;
     s.setSoTimeout(timeout);
-    long startTime = System.nanoTime();
+    long startTime = 0;
     System.out.println("[Field Unit] Listening on port: " + port);
 
     while (listen) {
@@ -180,7 +180,7 @@ public class FieldUnit implements IFieldUnit, Remote {
 
   @Override
   public void sendAverages() {
-    /* TODO: Attempt to send messages the specified number of times */
+    /* Attempt to send messages the specified number of times */
     System.out.println("Sending SMAs to RMI");
     for (float f : movingAverage) {
       MessageInfo messageInfo =
@@ -197,13 +197,13 @@ public class FieldUnit implements IFieldUnit, Remote {
 
   @Override
   public void printStats() {
-    /* TODO: Find out how many messages were missing */
+    /* Find out how many messages were missing */
     totalMissing = totalMessage - receivedMessages.size();
 
-    /* TODO: Print stats (i.e. how many message missing? do we know their sequence number? etc.) */
+    /* Print stats (i.e. how many message missing? do we know their sequence number? etc.) */
     System.out.println("Total Missing Message = " + totalMissing + " out of " + totalMessage);
 
-    /* TODO: Now re-initialise data structures for next time */
+    /* Now re-initialise data structures for next time */
     receivedMessages.clear();
   }
 }
