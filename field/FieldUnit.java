@@ -30,6 +30,7 @@ public class FieldUnit implements IFieldUnit, Remote {
   private final List<Float> movingAverage;
   private int totalMessage;
   private int totalMissing;
+  private final List<Integer> messageLoss = new ArrayList<>();
 
   private ICentralServer centralServer;
 
@@ -77,6 +78,7 @@ public class FieldUnit implements IFieldUnit, Remote {
     s.setSoTimeout(timeout);
     long startTime = System.nanoTime();
     System.out.println("[Field Unit] Listening on port: " + port);
+    int counter = 1;
 
     while (listen) {
       try {
@@ -96,6 +98,10 @@ public class FieldUnit implements IFieldUnit, Remote {
         MessageInfo messageInfo = new MessageInfo(msg);
         addMessage(messageInfo);
         totalMessage = messageInfo.getTotalMessages();
+        if (messageInfo.getMessageNum() != counter) {
+          messageLoss.add(counter);
+          counter = messageInfo.getMessageNum();
+        }
         System.out.println(
             "[Field Unit] Message "
                 + messageInfo.getMessageNum()
@@ -103,6 +109,7 @@ public class FieldUnit implements IFieldUnit, Remote {
                 + totalMessage
                 + " received. Value = "
                 + messageInfo.getMessage());
+        counter++;
 
         /* Keep listening UNTIL done with receiving  */
         if (messageInfo.getMessageNum() == messageInfo.getTotalMessages()) {
@@ -200,8 +207,10 @@ public class FieldUnit implements IFieldUnit, Remote {
 
     /* TODO: Print stats (i.e. how many message missing? do we know their sequence number? etc.) */
     System.out.println("Total Missing Message = " + totalMissing + " out of " + totalMessage);
+    System.out.println("Missing Messages: " + messageLoss);
 
     /* TODO: Now re-initialise data structures for next time */
     receivedMessages.clear();
+    messageLoss.clear();
   }
 }
