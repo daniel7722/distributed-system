@@ -21,6 +21,7 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
   private List<MessageInfo> receivedMessages;
   private int counter;
   private int totalMessage;
+  private long startTime;
 
   protected CentralServer() throws RemoteException {
     super();
@@ -58,6 +59,7 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
     if (msg.getMessageNum() == 1) {
       counter = 0;
       receivedMessages = new ArrayList<>();
+      startTime = System.nanoTime();
     }
     counter++;
 
@@ -75,6 +77,7 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
     /* TODO: Print stats (i.e. how many message missing?
      * do we know their sequence number? etc.) */
     System.out.println("Total missing messages: " + totalMissing + " out of " + totalMessage);
+    System.out.println("Time taken to receive these packets is " + (System.nanoTime() - startTime) / 1000000 + "ms");
 
     /* TODO: Now re-initialise data structures for next time */
     receivedMessages.clear();
