@@ -3,8 +3,6 @@ package sensor;
 /*
  * Updated on Feb 2023
  */
-import static java.lang.Thread.sleep;
-
 import common.MessageInfo;
 
 import java.io.IOException;
@@ -23,10 +21,10 @@ public class Sensor implements ISensor {
   private DatagramPacket p;
   private final String address;
 
-  // The buffersize chosen here as 24 because each packet has maximum 21 bytes long.
-  // It is enough to set the buffersize slightly higher than the maximum to ensure
+  // The bufferSize chosen here as 24 because each packet has maximum 21 bytes long.
+  // It is enough to set the bufferSize slightly higher than the maximum to ensure
   // efficient memory usage.
-  private static final int buffsize = 24;
+  private static final int buffSize = 24;
 
   public Sensor(String address, int port, int totMsg) throws SocketException, UnknownHostException {
 
@@ -62,10 +60,10 @@ public class Sensor implements ISensor {
     int port = Integer.parseInt(args[1]);
     int totMsg = Integer.parseInt(args[2]);
 
-    /* TODO: Call constructor of sensor to build Sensor object*/
+    /* Call constructor of sensor to build Sensor object*/
     Sensor sensor = new Sensor(address, port, totMsg);
 
-    /* TODO: Use Run to send the messages */
+    /* Use Run to send the messages */
     sensor.run(totMsg);
   }
 
@@ -73,15 +71,15 @@ public class Sensor implements ISensor {
   public void sendMessage(String address, int port, MessageInfo msg) throws IOException {
     String toSend = msg.toString();
 
-    /* TODO: Build destination address object */
+    /* Build destination address object */
     InetAddress addr = InetAddress.getByName(address);
 
-    /* TODO: Build datagram packet to send */
+    /* Build datagram packet to send */
     byte[] sendData = toSend.getBytes();
 
-    if (sendData.length < buffsize) {
+    if (sendData.length < buffSize) {
       p = new DatagramPacket(sendData, sendData.length, addr, port);
-      /* TODO: Send packet */
+      /* Send packet */
       s.send(p);
     } else {
       System.out.println("Message too long");

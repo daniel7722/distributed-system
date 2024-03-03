@@ -3,48 +3,28 @@ package field;
 /*
  * Updated on Feb 2023
  */
-import static java.lang.Thread.sleep;
-
-import centralserver.CentralServer;
 import centralserver.ICentralServer;
 import common.MessageInfo;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
-/* You can add/change/delete class attributes if you think it would be
- * appropriate.
- *
- * You can also add helper methods and change the implementation of those
- * provided if you think it would be appropriate, as long as you DO NOT
- * CHANGE the interface.
- */
 
 public class FieldUnit implements IFieldUnit, Remote {
   private ICentralServer central_server;
 
-  /* Note: Could you discuss in one line of comment what do you think can be
-   * an appropriate size for buffsize?
-   * (Which is used to init DatagramPacket?)
-   */
+  // The bufferSize chosen here as 24 because each packet has maximum 21 bytes long.
+  // It is enough to set the bufferSize slightly higher than the maximum to ensure
+  // efficient memory usage.
 
-  private static final int buffsize = 2048;
+  private static final int buffSize = 2048;
   private int timeout = 50000;
   private List<Float> receivedMessages;
   private final List<Float> movingAverage;
@@ -54,20 +34,20 @@ public class FieldUnit implements IFieldUnit, Remote {
   private ICentralServer centralServer;
 
   public FieldUnit() {
-    /* TODO: Initialise data structures */
+    /* Initialise data structures */
     movingAverage = new ArrayList<>();
     receivedMessages = null;
   }
 
   @Override
   public void addMessage(MessageInfo msg) {
-    /* TODO: Save received message in receivedMessages */
+    /* Save received message in receivedMessages */
     receivedMessages.add(msg.getMessage());
   }
 
   @Override
   public void sMovingAverage(int k) {
-    /* TODO: Compute SMA and store values in a class attribute */
+    /* Compute SMA and store values in a class attribute */
     System.out.println("Computing SMAs");
     float average = 0;
     int rear = 0;
@@ -90,36 +70,30 @@ public class FieldUnit implements IFieldUnit, Remote {
 
     this.timeout = timeout;
 
-    /* TODO: Create UDP socket and bind to local port 'port' */
+    /* Create UDP socket and bind to local port 'port' */
     DatagramSocket s = new DatagramSocket(port);
-    DatagramPacket p;
-    byte[] receive = new byte[buffsize];
-
+    byte[] receive = new byte[buffSize];
     boolean listen = true;
-
-    System.out.println("[Field Unit] Listening on port: " + port);
-
     s.setSoTimeout(timeout);
     long startTime = System.nanoTime();
+    System.out.println("[Field Unit] Listening on port: " + port);
 
     while (listen) {
-      MessageInfo messageInfo = null;
       try {
-        /* TODO: Receive until all messages in the transmission (msgTot) have been received or until
+        /* Receive until all messages in the transmission (msgTot) have been received or until
         there is nothing more to be received */
-        p = new DatagramPacket(receive, receive.length);
+        DatagramPacket p = new DatagramPacket(receive, receive.length);
+        s.receive(p);
 
-        /* TODO: If this is the first message, initialise the receive data structure before storing it. */
-
+        /* If this is the first message, initialise the received data structure before storing it. */
         if (receivedMessages == null) {
           receivedMessages = new ArrayList<>();
           startTime = System.nanoTime();
         }
-        s.receive(p);
 
-        /* TODO: Store the message */
+        /* Store the message */
         String msg = new String(p.getData()).replaceAll("[\n\r]", "");
-        messageInfo = new MessageInfo(msg);
+        MessageInfo messageInfo = new MessageInfo(msg);
         addMessage(messageInfo);
         totalMessage = messageInfo.getTotalMessages();
         System.out.println(
@@ -130,12 +104,11 @@ public class FieldUnit implements IFieldUnit, Remote {
                 + " received. Value = "
                 + messageInfo.getMessage());
 
-        /* TODO: Keep listening UNTIL done with receiving  */
+        /* Keep listening UNTIL done with receiving  */
         if (messageInfo.getMessageNum() == messageInfo.getTotalMessages()) {
           long estimatedTime = System.nanoTime() - startTime;
           System.out.println(
               "Time taken to receive these packets is " + estimatedTime / 1000000 + "ms");
-
           listen = false;
         }
       } catch (NumberFormatException e) {
@@ -144,10 +117,12 @@ public class FieldUnit implements IFieldUnit, Remote {
       } catch (SocketTimeoutException e) {
         System.out.println("Timer");
         listen = false;
+      } finally {
+        s.close();
       }
     }
 
-    /* TODO: Close socket  */
+    /* Close socket  */
     s.close();
   }
 
@@ -216,11 +191,6 @@ public class FieldUnit implements IFieldUnit, Remote {
         System.err.println("RemoteException: " + e.getMessage());
         e.printStackTrace();
       }
-      //      try {
-      //        sleep(100);
-      //      } catch (InterruptedException e) {
-      //        throw new RuntimeException(e);
-      //      }
     }
     movingAverage.clear();
   }
