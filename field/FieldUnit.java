@@ -3,6 +3,7 @@ package field;
 /*
  * Updated on Feb 2023
  */
+
 import centralserver.ICentralServer;
 import common.MessageInfo;
 
@@ -16,22 +17,24 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 
 public class FieldUnit implements IFieldUnit, Remote {
+
   private ICentralServer central_server;
 
   // The bufferSize chosen here as 24 because each packet has maximum 21 bytes long.
   // It is enough to set the bufferSize slightly higher than the maximum to ensure
   // efficient memory usage.
 
-  private static final int buffSize = 2048;
+  private static final int buffSize = 24;
   private int timeout = 50000;
   private List<Float> receivedMessages;
   private final List<Float> movingAverage;
   private int totalMessage;
   private int totalMissing;
   private final List<Integer> messageLoss = new ArrayList<>();
-
+  private final Set<Integer> receivedMessageNumbers = new HashSet<>();
   private ICentralServer centralServer;
 
   public FieldUnit() {
@@ -52,6 +55,7 @@ public class FieldUnit implements IFieldUnit, Remote {
     System.out.println("Computing SMAs");
     float average = 0;
     int rear = 0;
+
     // i < k
     for (; rear < k - 1 && rear < receivedMessages.size(); rear++) {
       movingAverage.add(receivedMessages.get(rear));
@@ -78,7 +82,6 @@ public class FieldUnit implements IFieldUnit, Remote {
     s.setSoTimeout(timeout);
     long startTime = System.nanoTime();
     System.out.println("[Field Unit] Listening on port: " + port);
-    int counter = 1;
 
     while (listen) {
       try {
@@ -98,10 +101,7 @@ public class FieldUnit implements IFieldUnit, Remote {
         MessageInfo messageInfo = new MessageInfo(msg);
         addMessage(messageInfo);
         totalMessage = messageInfo.getTotalMessages();
-        if (messageInfo.getMessageNum() != counter) {
-          messageLoss.add(counter);
-          counter = messageInfo.getMessageNum();
-        }
+        receivedMessageNumbers.add(messageInfo.getMessageNum());
         System.out.println(
             "[Field Unit] Message "
                 + messageInfo.getMessageNum()
@@ -109,7 +109,6 @@ public class FieldUnit implements IFieldUnit, Remote {
                 + totalMessage
                 + " received. Value = "
                 + messageInfo.getMessage());
-        counter++;
 
         /* Keep listening UNTIL done with receiving  */
         if (messageInfo.getMessageNum() == messageInfo.getTotalMessages()) {
@@ -126,6 +125,11 @@ public class FieldUnit implements IFieldUnit, Remote {
         listen = false;
       }
     }
+    for (int i = 1; i <= totalMessage; i++) {
+      if (!receivedMessageNumbers.contains(i)) {
+        messageLoss.add(i);
+      }
+    }
 
     /* Close socket  */
     s.close();
@@ -137,27 +141,27 @@ public class FieldUnit implements IFieldUnit, Remote {
       return;
     }
 
-    /* TODO: Parse arguments */
+    /* Parse arguments */
     int port = Integer.parseInt(args[0]);
     String address = args[1];
 
-    /* TODO: Construct Field Unit Object */
+    /* Construct Field Unit Object */
     FieldUnit fieldUnit = new FieldUnit();
 
-    /* TODO: Call initRMI on the Field Unit Object */
+    /* Call initRMI on the Field Unit Object */
     fieldUnit.initRMI(address);
 
-    /* TODO: Wait for incoming transmission */
+    /* Wait for incoming transmission */
     while (true) {
       fieldUnit.receiveMeasures(port, fieldUnit.timeout);
 
-      /* TODO: Compute Averages - call sMovingAverage() on Field Unit object */
+      /* Compute Averages - call sMovingAverage() on Field Unit object */
       fieldUnit.sMovingAverage(7);
 
-      /* TODO: Compute and print stats */
+      /* Compute and print stats */
       fieldUnit.printStats();
 
-      /* TODO: Send data to the Central Serve via RMI and
+      /* Send data to the Central Serve via RMI and
        *        wait for incoming transmission again
        */
       fieldUnit.sendAverages();
@@ -167,8 +171,8 @@ public class FieldUnit implements IFieldUnit, Remote {
   @Override
   public void initRMI(String address) {
 
-    /* TODO: Initialise Security Manager (If JAVA version earlier than version 17) */
-    /* TODO: Bind to RMIServer */
+    /* Initialise Security Manager (If JAVA version earlier than version 17) */
+    /* Bind to RMIServer */
     try {
       centralServer = (ICentralServer) Naming.lookup("rmi://" + address + "/CentralService");
       System.out.println("FieldUnit is ready to listen on " + address);
@@ -185,7 +189,7 @@ public class FieldUnit implements IFieldUnit, Remote {
 
   @Override
   public void sendAverages() {
-    /* TODO: Attempt to send messages the specified number of times */
+    /* Attempt to send messages the specified number of times */
     System.out.println("Sending SMAs to RMI");
     for (float f : movingAverage) {
       MessageInfo messageInfo =
@@ -202,15 +206,17 @@ public class FieldUnit implements IFieldUnit, Remote {
 
   @Override
   public void printStats() {
-    /* TODO: Find out how many messages were missing */
+    /* Find out how many messages were missing */
     totalMissing = totalMessage - receivedMessages.size();
 
-    /* TODO: Print stats (i.e. how many message missing? do we know their sequence number? etc.) */
+    /* Print stats (i.e. how many message missing? do we know their sequence number? etc.) */
     System.out.println("Total Missing Message = " + totalMissing + " out of " + totalMessage);
     System.out.println("Missing Messages: " + messageLoss);
 
-    /* TODO: Now re-initialise data structures for next time */
+    /* Now re-initialise data structures for next time */
     receivedMessages.clear();
+    receivedMessageNumbers.clear();
     messageLoss.clear();
+    totalMessage = 0;
   }
 }

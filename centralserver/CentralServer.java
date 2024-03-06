@@ -15,29 +15,29 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/* TODO extend appropriate classes and implement the appropriate interfaces */
+/* extend appropriate classes and implement the appropriate interfaces */
 public class CentralServer extends UnicastRemoteObject implements ICentralServer {
 
   private List<MessageInfo> receivedMessages;
+  private int totalMessages = -1;
   private int counter;
-  private int totalMessage;
   private long startTime;
 
   protected CentralServer() throws RemoteException {
     super();
 
-    /* TODO: Initialise Array receivedMessages */
+    /* Initialise Array receivedMessages */
     receivedMessages = new ArrayList<>();
   }
 
   public static void main(String[] args) throws RemoteException {
     ICentralServer cs = new CentralServer();
 
-    /* TODO: Create (or Locate) Registry */
+    /* Create (or Locate) Registry */
     Registry r = LocateRegistry.createRegistry(1099);
     System.out.println("RMI Registry started on port 1099.");
 
-    /* TODO: Bind to Registry */
+    /* Bind to Registry */
     r.rebind("CentralService", cs);
 
     System.out.println("Central Server is running...");
@@ -45,7 +45,7 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
 
   @Override
   public void receiveMsg(MessageInfo msg) {
-    totalMessage = msg.getTotalMessages();
+    totalMessages = msg.getTotalMessages();
 
     System.out.println(
         "[Central Server] Received message "
@@ -55,7 +55,7 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
             + ". Measure = "
             + msg.getMessage());
 
-    /* TODO: If this is the first message, reset counter and initialise data structure. */
+    /* If this is the first message, reset counter and initialise data structure. */
     if (msg.getMessageNum() == 1) {
       counter = 0;
       receivedMessages = new ArrayList<>();
@@ -63,21 +63,23 @@ public class CentralServer extends UnicastRemoteObject implements ICentralServer
     }
     counter++;
 
-    /* TODO: Save current message */
+    /* Save current message */
     receivedMessages.add(msg);
 
-    /* TODO: If done with receiveing prints stats. */
+    /* If done with receiveing prints stats. */
     printStats();
   }
 
   public void printStats() {
-    /* TODO: Find out how many messages were missing */
-    int totalMissing = totalMessage - counter;
+    /* Find out how many messages were missing */
+    int totalMissing = totalMessages - counter;
 
-    /* TODO: Print stats (i.e. how many message missing?
+    /* Print stats (i.e. how many message missing?
      * do we know their sequence number? etc.) */
-    System.out.println("Total missing messages: " + totalMissing + " out of " + totalMessage);
-    System.out.println("Time taken to receive these packets is " + (System.nanoTime() - startTime) / 1000000 + "ms");
+    System.out.println("Total missing messages: " + totalMissing + " out of " + totalMessages);
+    System.out.println(
+        "Time taken to receive these packets is " + (System.nanoTime() - startTime) / 1000000
+            + "ms");
 
     /* TODO: Now re-initialise data structures for next time */
     receivedMessages.clear();

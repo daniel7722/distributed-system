@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="57a44093-7a3e-475d-a5bc-b55e91ec04ee" name="Changes" comment="refactor: changed the way to calculate time of receiving udp packets">
+      <change beforePath="$PROJECT_DIR$/field/FieldUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/field/FieldUnit.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2cVIULhmAYbaqU9XX80B9GPzeFa" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.CentralServer.executor&quot;: &quot;Run&quot;,
+    &quot;Application.FieldUnit.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Sensor.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/danielhuang/Course/distributed-system&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager" selected="Application.FieldUnit">
+    <configuration name="CentralServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="centralserver.CentralServer" />
+      <module name="distributed-system" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="centralserver.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FieldUnit" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="field.FieldUnit" />
+      <module name="distributed-system" />
+      <option name="PROGRAM_PARAMETERS" value="9999 localhost" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="field.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Sensor" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sensor.Sensor" />
+      <module name="distributed-system" />
+      <option name="PROGRAM_PARAMETERS" value="127.0.0.1 9999 20" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sensor.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.CentralServer" />
+      <item itemvalue="Application.FieldUnit" />
+      <item itemvalue="Application.Sensor" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.FieldUnit" />
+        <item itemvalue="Application.Sensor" />
+        <item itemvalue="Application.CentralServer" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.1-openjdk-21.0.1-f644763e9732-2f79fb23" />
+        <option value="jdk-21.0.2-openjdk-21.0.2-f644763e9732-a81d5c7c" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="57a44093-7a3e-475d-a5bc-b55e91ec04ee" name="Changes" comment="" />
+      <created>1708190334027</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1708190334027</updated>
+      <workItem from="1708190335076" duration="11507000" />
+      <workItem from="1708333310531" duration="3019000" />
+      <workItem from="1708427848644" duration="4196000" />
+      <workItem from="1708469262574" duration="4306000" />
+      <workItem from="1708616438667" duration="24000" />
+      <workItem from="1708617499026" duration="2000" />
+      <workItem from="1708643606761" duration="16000" />
+      <workItem from="1708690121103" duration="14577000" />
+      <workItem from="1708818333410" duration="13527000" />
+      <workItem from="1708938009403" duration="37000" />
+      <workItem from="1709475448815" duration="3777000" />
+    </task>
+    <task id="LOCAL-00001" summary="feat: implemented Sensor class&#10;having troubles with socket binding especially getPort and getAddress">
+      <option name="closed" value="true" />
+      <created>1708207667701</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1708207667701</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat: modified Sensor class, fixed the bug and now it's printing correctly">
+      <option name="closed" value="true" />
+      <created>1708268116640</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1708268116640</updated>
+    </task>
+    <task id="LOCAL-00003" summary="feat: added things in FieldUnit class&#10;have not tested any code yet">
+      <option name="closed" value="true" />
+      <created>1708336474786</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1708336474786</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat: added things in FieldUnit class&#10;have not tested any code yet 2">
+      <option name="closed" value="true" />
+      <created>1708501705043</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1708501705043</updated>
+    </task>
+    <task id="LOCAL-00005" summary="feat: added rmi server &#10;Modified CentralServer file without printstate">
+      <option name="closed" value="true" />
+      <created>1708800453149</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1708800453149</updated>
+    </task>
+    <task id="LOCAL-00006" summary="refactor: debug udp package sending and receiving &#10;Modified Sensor class and FieldUnit.java with additional trycatch and now it works on localhost">
+      <option name="closed" value="true" />
+      <created>1708818861742</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1708818861742</updated>
+    </task>
+    <task id="LOCAL-00007" summary="refactor: added udp missing package counter">
+      <option name="closed" value="true" />
+      <created>1708819567382</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1708819567382</updated>
+    </task>
+    <task id="LOCAL-00008" summary="feat, refactor: added moving average method and refactor code">
+      <option name="closed" value="true" />
+      <created>1708858637955</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1708858637955</updated>
+    </task>
+    <task id="LOCAL-00009" summary="refactor: added method to parse float in a more robust way">
+      <option name="closed" value="true" />
+      <created>1708861330823</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1708861330823</updated>
+    </task>
+    <task id="LOCAL-00010" summary="style, refactor: added timestamp to record time taken to send udp packets.">
+      <option name="closed" value="true" />
+      <created>1708871768351</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1708871768351</updated>
+    </task>
+    <task id="LOCAL-00011" summary="style, refactor: added timestamp to record time taken to receive udp packets.">
+      <option name="closed" value="true" />
+      <created>1708872401533</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1708872401533</updated>
+    </task>
+    <task id="LOCAL-00012" summary="refactor: changed the way to calculate time of receiving udp packets">
+      <option name="closed" value="true" />
+      <created>1709477839917</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1709477839917</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: implemented Sensor class&#10;having troubles with socket binding especially getPort and getAddress" />
+    <MESSAGE value="feat: modified Sensor class, fixed the bug and now it's printing correctly" />
+    <MESSAGE value="feat: added things in FieldUnit class&#10;have not tested any code yet" />
+    <MESSAGE value="feat: added things in FieldUnit class&#10;have not tested any code yet 2" />
+    <MESSAGE value="feat: added rmi server &#10;Modified CentralServer file without printstate" />
+    <MESSAGE value="refactor: debug udp package sending and receiving &#10;Modified Sensor class and FieldUnit.java with additional trycatch and now it works on localhost" />
+    <MESSAGE value="refactor: added udp missing package counter" />
+    <MESSAGE value="feat, refactor: added moving average method and refactor code" />
+    <MESSAGE value="refactor: added method to parse float in a more robust way" />
+    <MESSAGE value="style, refactor: added timestamp to record time taken to send udp packets." />
+    <MESSAGE value="style, refactor: added timestamp to record time taken to receive udp packets." />
+    <MESSAGE value="refactor: changed the way to calculate time of receiving udp packets" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: changed the way to calculate time of receiving udp packets" />
+  </component>
+</project>
